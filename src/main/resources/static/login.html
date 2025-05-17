@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Iniciar Sesión</h2>
+    <form id="loginForm">
+        <input type="email" id="correo" placeholder="Correo electrónico" required />
+        <input type="password" id="contrasena" placeholder="Contraseña" required />
+        <button type="submit">Ingresar</button>
+        <div class="message" id="message"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const correo = document.getElementById("correo").value;
+        const contrasena = document.getElementById("contrasena").value;
+
+        fetch("http://localhost:8080/api/usuarios/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ correo, contrasena })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error("Credenciales incorrectas");
+            }
+        })
+        .then(data => {
+            document.getElementById("message").innerText = data;
+            document.getElementById("message").style.color = "green";
+        })
+        .catch(error => {
+            document.getElementById("message").innerText = error.message;
+            document.getElementById("message").style.color = "red";
+        });
+    });
+</script>
+</body>
+</html>
